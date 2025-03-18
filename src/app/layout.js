@@ -18,15 +18,10 @@ const geistMono = Geist_Mono({
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body>
-        <SessionProvider>
-          <QueryClientProvider client={queryClient}>
-            <Navbar />
-            {children}
-          </QueryClientProvider>
-        </SessionProvider>
-      </body>
-    </html>
+    <SessionProvider>
+      <html lang="es">
+        <body>{children}</body>
+      </html>
+    </SessionProvider>
   );
 }
