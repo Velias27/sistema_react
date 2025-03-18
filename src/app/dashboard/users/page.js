@@ -1,23 +1,19 @@
 "use client";
 import { useState, useEffect } from "react";
+import withRole from "@/lib/withRole"; // Importamos la HOC
 import { useSession } from "next-auth/react";
 
-export default function Users() {
+function Users() {
   const { data: session } = useSession();
   const [users, setUsers] = useState([]);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!session || session.user.role !== "ADMIN") {
-      setError("Acceso denegado");
-      return;
-    }
-
     fetch("/api/users")
       .then((res) => res.json())
       .then(setUsers)
-      .catch((err) => setError("Error cargando usuarios"));
-  }, [session]);
+      .catch(() => setError("Error cargando usuarios"));
+  }, []);
 
   if (error) return <p className="text-red-500">{error}</p>;
 
@@ -40,8 +36,12 @@ export default function Users() {
               <td className="p-2">{user.email}</td>
               <td className="p-2">{user.role}</td>
               <td className="p-2">
-                <button className="bg-blue-500 text-white px-2 py-1 rounded mr-2">Editar</button>
-                <button className="bg-red-500 text-white px-2 py-1 rounded">Eliminar</button>
+                <button className="bg-blue-500 text-white px-2 py-1 rounded mr-2">
+                  Editar
+                </button>
+                <button className="bg-red-500 text-white px-2 py-1 rounded">
+                  Eliminar
+                </button>
               </td>
             </tr>
           ))}
@@ -50,3 +50,6 @@ export default function Users() {
     </div>
   );
 }
+
+// Protegemos la página usando withRole y permitimos acceso solo a "ADMIN"
+export default withRole(Users, ["ADMIN"]);
