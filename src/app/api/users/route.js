@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import prisma from "@/app/lib/prisma";
 import bcrypt from "bcrypt";
 
 //Se obtienen todos los usuarios para ADMIN
@@ -9,7 +9,7 @@ export async function GET() {
   });
   return NextResponse.json(users);
 }
- 
+
 //Se crea un usuario
 export async function POST(req) {
   const { name, email, password, role } = await req.json();
