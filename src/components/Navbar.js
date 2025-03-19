@@ -1,52 +1,49 @@
 "use client";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { Button } from "@heroui/react";
 
 export default function Navbar() {
   const { data: session } = useSession();
 
   return (
     <nav className="bg-blue-600 p-4 text-white flex justify-between items-center">
+      {/* Logo o nombre de la aplicación */}
       <div>
         <Link href="/dashboard">
-          <Button variant="text" color="inherit" className="font-bold text-xl">
-            Dashboard
-          </Button>
+          <span className="font-bold text-xl cursor-pointer">Dashboard</span>
         </Link>
       </div>
 
+      {/* Menú de navegación */}
       <div className="flex space-x-6">
+        {/* Mostrar opción Usuarios solo si el rol es ADMIN */}
         {session?.user.role === "ADMIN" && (
           <Link href="/dashboard/users">
-            <Button variant="text" color="inherit">
-              Usuarios
-            </Button>
+            <span className="cursor-pointer hover:text-blue-200">Usuarios</span>
           </Link>
         )}
 
+        {/* Mostrar opción Proyectos solo si el rol es PROJECT_MANAGER */}
         {session?.user.role === "PROJECT_MANAGER" && (
           <Link href="/dashboard/projects">
-            <Button variant="text" color="inherit">
+            <span className="cursor-pointer hover:text-blue-200">
               Proyectos
-            </Button>
+            </span>
           </Link>
         )}
 
+        {/* Mostrar opción Tareas para todos los usuarios autenticados */}
         <Link href="/dashboard/tasks">
-          <Button variant="text" color="inherit">
-            Tareas
-          </Button>
+          <span className="cursor-pointer hover:text-blue-200">Tareas</span>
         </Link>
 
-        {/* Cerrar sesión */}
-        <Button
+        {/* Botón de cerrar sesión */}
+        <button
           onClick={() => signOut()}
-          color="error"
-          className="px-3 py-1 rounded"
+          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
         >
           Cerrar sesión
-        </Button>
+        </button>
       </div>
     </nav>
   );
