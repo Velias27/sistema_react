@@ -1,3 +1,4 @@
+//src\app\login\page.js
 "use client";
 import { useEffect, useState } from "react";
 import { useSession, signIn } from "next-auth/react";
@@ -55,7 +56,10 @@ export default function Login() {
             required
             className="w-full p-2 border rounded"
           />
-          <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded">
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white p-2 rounded"
+          >
             Iniciar Sesión
           </button>
         </form>

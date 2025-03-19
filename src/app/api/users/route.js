@@ -1,3 +1,4 @@
+//src\app\api\users\route.js
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcrypt";

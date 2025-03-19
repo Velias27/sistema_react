@@ -1,3 +1,4 @@
+//src\app\api\projects\route.js
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 

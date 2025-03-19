@@ -1,3 +1,4 @@
+//src\app\dashboard\stats\page.js
 "use client";
 import { Bar } from "react-chartjs-2";
 
