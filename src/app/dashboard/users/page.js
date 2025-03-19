@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import withRole from "@/app/lib/withRole";
+import withRole from "@lib/withRole";
 import { useSession } from "next-auth/react";
 
 function Users() {
