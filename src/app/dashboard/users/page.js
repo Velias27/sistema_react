@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import withRole from "@/app/lib/withRole";
+import withRole from "@/app/lib/withRole"; // Asegúrate de que withRole está correctamente configurado
 import { useSession } from "next-auth/react";
 
 function Users() {
@@ -9,7 +9,7 @@ function Users() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetch("/api/users")
+    fetch("/api/users") // Asegúrate de que la ruta de la API sea correcta
       .then((res) => res.json())
       .then(setUsers)
       .catch(() => setError("Error cargando usuarios"));

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Button, Input } from "@heroui/react"; // Ejemplo de HeroUI
 
 export default function TasksPage() {
   const [tasks, setTasks] = useState([]);
@@ -25,28 +24,41 @@ export default function TasksPage() {
         .post("/api/tasks", { title: newTaskTitle, projectId })
         .then((response) => {
           setTasks([...tasks, response.data]);
-          setNewTaskTitle("");
+          setNewTaskTitle(""); // Limpiar el campo de la nueva tarea
         })
         .catch((error) => console.error("Error creating task", error));
     }
   };
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold">Gestionar Tareas</h1>
-      <div className="my-4">
-        <Input
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-4">Gestionar Tareas</h1>
+
+      {/* Input para nueva tarea */}
+      <div className="mb-4">
+        <input
           type="text"
           value={newTaskTitle}
           onChange={(e) => setNewTaskTitle(e.target.value)}
           placeholder="Nueva tarea"
+          className="border p-2 rounded w-80"
         />
-        <Button onClick={handleCreateTask}>Crear Tarea</Button>
+        <button
+          onClick={handleCreateTask}
+          className="bg-blue-500 text-white px-4 py-2 rounded ml-2"
+        >
+          Crear Tarea
+        </button>
       </div>
+
+      {/* Mostrar lista de tareas */}
       <ul>
         {tasks.map((task) => (
-          <li key={task.id} className="py-2">
-            <span>{task.title}</span>
+          <li
+            key={task.id}
+            className="border p-2 rounded mb-2 hover:bg-gray-100"
+          >
+            {task.title}
           </li>
         ))}
       </ul>

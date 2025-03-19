@@ -3,7 +3,6 @@ import { useState } from "react";
 import withRole from "../../lib/withRole";
 import { useSession } from "next-auth/react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Button, Input, Toast } from "@heroui/react"; // Importa los componentes de HeroUI
 
 export function Projects() {
   const { data: session } = useSession();
@@ -57,15 +56,16 @@ export function Projects() {
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">Gestión de Proyectos</h2>
 
+      {/* Input para crear un proyecto */}
       <div className="flex items-center mb-4">
-        <Input
+        <input
           type="text"
           value={newProject}
           onChange={(e) => setNewProject(e.target.value)}
           placeholder="Nombre del proyecto"
           className="border p-2 rounded w-80"
         />
-        <Button
+        <button
           onClick={() => {
             if (newProject.trim() === "") {
               setToastMessage("Por favor, ingrese un nombre para el proyecto.");
@@ -77,22 +77,28 @@ export function Projects() {
           disabled={createProjectMutation.isLoading}
         >
           {createProjectMutation.isLoading ? "Creando..." : "Crear Proyecto"}
-        </Button>
+        </button>
       </div>
 
+      {/* Mostrar notificaciones (Toasts) */}
       {toastMessage && (
-        <Toast
-          type={toastMessage.includes("éxito") ? "success" : "error"}
-          message={toastMessage}
-          onClose={() => setToastMessage("")}
-        />
+        <div
+          className={`p-4 rounded mb-4 ${
+            toastMessage.includes("éxito")
+              ? "bg-green-100 text-green-800"
+              : "bg-red-100 text-red-800"
+          }`}
+        >
+          {toastMessage}
+        </div>
       )}
 
+      {/* Mostrar lista de proyectos */}
       <ul className="mt-4">
         {projects?.map((project) => (
           <li
             key={project.id}
-            className="border p-2 rounded mb-2 hover:bg-gray-100"
+            className="border p-2 rounded mb-2 hover:bg-gray-100 cursor-pointer"
           >
             {project.name}
           </li>
