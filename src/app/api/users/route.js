@@ -26,10 +26,14 @@ export async function POST(req) {
 //Se actualiza un usuario
 export async function PUT(req) {
   const { id, name, email, password, role } = await req.json();
-
+  const data = { name, email, role };
+  if (password && password.trim() !== "") {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    data.password = hashedPassword;
+  }
   const updatedUser = await prisma.user.update({
     where: { id },
-    data: { name, email, role },
+    data,
   });
   return NextResponse.json(updatedUser);
 }

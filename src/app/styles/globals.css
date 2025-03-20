@@ -1,29 +1,22 @@
+@import "tailwindcss";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import "tailwindcss";
 
-/* ============================
-   Estilos base y configuración
-   ============================ */
-
-/* Definición de variables base */
 :root {
-  /* Fuente moderna: Poppins (asegúrate de importarla en tu proyecto, por ejemplo, vía Google Fonts) */
-  --font-sans: "Poppins", sans-serif;
-
-  /* Colores para modo claro */
-  --background: #f0f0f0;
-  --foreground: #171717;
+  --background: #ffffff; /* Color de fondo claro */
+  --foreground: #171717; /* Color de texto oscuro */
+  --font-geist-sans: "Poppins", sans-serif; /* Cambia a Poppins */
+  --font-geist-mono: "JetBrains Mono", monospace; /* Fuente mono moderna */
 }
 
-/* Integración de HeroUI Theme */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
 }
 
-/* Modo oscuro basado en la preferencia del usuario */
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #202327;
@@ -31,12 +24,8 @@
   }
 }
 
-/* Estilos base globales */
-@layer base {
-  html {
-    font-family: var(--font-sans);
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
 }

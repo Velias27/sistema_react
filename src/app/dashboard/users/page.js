@@ -16,6 +16,7 @@ import {
   ModalBody,
   ModalFooter,
   Button,
+  useDisclosure,
 } from "@heroui/react";
 
 function Users() {
@@ -24,23 +25,25 @@ function Users() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
-  // Estado para el formulario de creación de usuario (desde el modal)
+  // Estado para el formulario de creación de usuario
   const [newUser, setNewUser] = useState({
     name: "",
     email: "",
     password: "",
     role: "MEMBER",
   });
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   // Estados para edición de usuario (edición inline en la tabla)
   const [editingUserId, setEditingUserId] = useState(null);
   const [editingUser, setEditingUser] = useState({
     name: "",
     email: "",
-    password: "",
+    password: "", // Campo opcional para cambiar contraseña
     role: "",
   });
+
+  // Usamos useDisclosure para controlar el modal
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   // Función para obtener la lista de usuarios
   const fetchUsers = useCallback(async () => {
@@ -63,8 +66,8 @@ function Users() {
     return re.test(String(email).toLowerCase());
   };
 
-  const handleCreateUser = async (e) => {
-    e.preventDefault();
+  // Función para crear un usuario; se llamará desde el modal.
+  const handleCreateUser = async () => {
     if (!newUser.name || !newUser.email || !newUser.password || !newUser.role) {
       setMessage("Todos los campos son obligatorios");
       return;
@@ -83,7 +86,6 @@ function Users() {
       await res.json();
       setMessage("Usuario creado con éxito");
       setNewUser({ name: "", email: "", password: "", role: "MEMBER" });
-      setIsCreateModalOpen(false);
       fetchUsers();
     } catch (err) {
       setMessage(err.message);
@@ -95,7 +97,7 @@ function Users() {
     setEditingUser({
       name: user.name,
       email: user.email,
-      password: "",
+      password: "", // Campo para cambiar contraseña (opcional)
       role: user.role,
     });
   };
@@ -115,10 +117,20 @@ function Users() {
       return;
     }
     try {
+      // Si se ingresó una nueva contraseña, se incluye en el payload
+      const payload = {
+        id,
+        name: editingUser.name,
+        email: editingUser.email,
+        role: editingUser.role,
+      };
+      if (editingUser.password.trim() !== "") {
+        payload.password = editingUser.password;
+      }
       const res = await fetch("/api/users", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, ...editingUser }),
+        body: JSON.stringify(payload),
       });
       if (!res.ok) throw new Error("Error actualizando usuario");
       await res.json();
@@ -167,92 +179,88 @@ function Users() {
         </div>
       )}
 
-      <Button
-        onPress={() => setIsCreateModalOpen(true)}
-        variant="primary"
-        className="mb-4"
-      >
+      {/* Botón que abre el modal usando useDisclosure */}
+      <Button onPress={onOpen} variant="primary" className="mb-4">
         Nuevo Usuario
       </Button>
 
-      <Modal
-        open={isCreateModalOpen}
-        onClose={() => {
-          setIsCreateModalOpen(false);
-          setNewUser({ name: "", email: "", password: "", role: "MEMBER" });
-        }}
-      >
+      {/* Modal centrado sobre la página */}
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
-          <ModalHeader>Crear Nuevo Usuario</ModalHeader>
-          <ModalBody>
-            <form
-              id="createUserForm"
-              onSubmit={handleCreateUser}
-              className="grid grid-cols-1 gap-4"
-            >
-              <input
-                type="text"
-                placeholder="Nombre"
-                value={newUser.name}
-                onChange={(e) =>
-                  setNewUser({ ...newUser, name: e.target.value })
-                }
-                className="border p-2 rounded"
-              />
-              <input
-                type="email"
-                placeholder="Email"
-                value={newUser.email}
-                onChange={(e) =>
-                  setNewUser({ ...newUser, email: e.target.value })
-                }
-                className="border p-2 rounded"
-              />
-              <input
-                type="password"
-                placeholder="Contraseña"
-                value={newUser.password}
-                onChange={(e) =>
-                  setNewUser({ ...newUser, password: e.target.value })
-                }
-                className="border p-2 rounded"
-              />
-              <select
-                value={newUser.role}
-                onChange={(e) =>
-                  setNewUser({ ...newUser, role: e.target.value })
-                }
-                className="border p-2 rounded"
-              >
-                <option value="ADMIN">ADMIN</option>
-                <option value="PROJECT_MANAGER">PROJECT_MANAGER</option>
-                <option value="MEMBER">MEMBER</option>
-              </select>
-            </form>
-          </ModalBody>
-          <ModalFooter>
-            <Button onPress={handleCreateUser} variant="success">
-              Crear Usuario
-            </Button>
-            <Button
-              onPress={() => setIsCreateModalOpen(false)}
-              variant="secondary"
-            >
-              Cancelar
-            </Button>
-          </ModalFooter>
+          {(onClose) => (
+            <div className="fixed inset-0 flex items-center justify-center">
+              <div className="bg-white p-6 rounded shadow-lg max-w-md w-full">
+                <ModalHeader>Crear Nuevo Usuario</ModalHeader>
+                <ModalBody>
+                  <input
+                    type="text"
+                    placeholder="Nombre"
+                    value={newUser.name}
+                    onChange={(e) =>
+                      setNewUser({ ...newUser, name: e.target.value })
+                    }
+                    className="border p-2 rounded w-full mb-2"
+                  />
+                  <input
+                    type="email"
+                    placeholder="Email"
+                    value={newUser.email}
+                    onChange={(e) =>
+                      setNewUser({ ...newUser, email: e.target.value })
+                    }
+                    className="border p-2 rounded w-full mb-2"
+                  />
+                  <input
+                    type="password"
+                    placeholder="Contraseña"
+                    value={newUser.password}
+                    onChange={(e) =>
+                      setNewUser({ ...newUser, password: e.target.value })
+                    }
+                    className="border p-2 rounded w-full mb-2"
+                  />
+                  <select
+                    value={newUser.role}
+                    onChange={(e) =>
+                      setNewUser({ ...newUser, role: e.target.value })
+                    }
+                    className="border p-2 rounded w-full"
+                  >
+                    <option value="ADMIN">ADMIN</option>
+                    <option value="PROJECT_MANAGER">PROJECT_MANAGER</option>
+                    <option value="MEMBER">MEMBER</option>
+                  </select>
+                </ModalBody>
+                <ModalFooter>
+                  <Button
+                    onPress={async () => {
+                      await handleCreateUser();
+                      onClose();
+                    }}
+                    variant="success"
+                  >
+                    Crear Usuario
+                  </Button>
+                  <Button onPress={onClose} variant="secondary">
+                    Cancelar
+                  </Button>
+                </ModalFooter>
+              </div>
+            </div>
+          )}
         </ModalContent>
       </Modal>
 
       {/* Tabla de usuarios */}
       <Table
         aria-label="Gestión de Usuarios"
-        className=" text-foreground rounded shadow justify-center align-center rounded-2xl"
+        className="text-foreground rounded shadow justify-center align-center rounded-2xl"
       >
         <TableHeader>
           <TableColumn>Nombre</TableColumn>
           <TableColumn>Email</TableColumn>
           <TableColumn>Rol</TableColumn>
+          <TableColumn>Contraseña</TableColumn>
           <TableColumn>Acciones</TableColumn>
         </TableHeader>
         <TableBody>
@@ -301,6 +309,24 @@ function Users() {
                   </select>
                 ) : (
                   user.role
+                )}
+              </TableCell>
+              <TableCell>
+                {editingUserId === user.id ? (
+                  <input
+                    type="password"
+                    placeholder="Nueva contraseña (opcional)"
+                    value={editingUser.password}
+                    onChange={(e) =>
+                      setEditingUser({
+                        ...editingUser,
+                        password: e.target.value,
+                      })
+                    }
+                    className="border p-1 rounded"
+                  />
+                ) : (
+                  "*******"
                 )}
               </TableCell>
               <TableCell>
