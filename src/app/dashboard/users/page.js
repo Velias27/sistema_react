@@ -38,11 +38,11 @@ function Users() {
   const [editingUser, setEditingUser] = useState({
     name: "",
     email: "",
-    password: "", // Campo opcional para cambiar contraseña
+    password: "",
     role: "",
   });
 
-  // Usamos useDisclosure para controlar el modal
+  // useDisclosure para el modal
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   // Función para obtener la lista de usuarios
@@ -66,7 +66,6 @@ function Users() {
     return re.test(String(email).toLowerCase());
   };
 
-  // Función para crear un usuario; se llamará desde el modal.
   const handleCreateUser = async () => {
     if (!newUser.name || !newUser.email || !newUser.password || !newUser.role) {
       setMessage("Todos los campos son obligatorios");
@@ -97,7 +96,7 @@ function Users() {
     setEditingUser({
       name: user.name,
       email: user.email,
-      password: "", // Campo para cambiar contraseña (opcional)
+      password: "", // Opcional para cambiar contraseña
       role: user.role,
     });
   };
@@ -117,7 +116,6 @@ function Users() {
       return;
     }
     try {
-      // Si se ingresó una nueva contraseña, se incluye en el payload
       const payload = {
         id,
         name: editingUser.name,
@@ -159,7 +157,6 @@ function Users() {
     }
   };
 
-  // Limpieza del mensaje de notificación
   useEffect(() => {
     if (message) {
       const timer = setTimeout(() => {
@@ -170,7 +167,8 @@ function Users() {
   }, [message]);
 
   return (
-    <div className="p-6">
+    // Contenedor con fondo oscuro y texto claro
+    <div className="p-12 bg-gray-950 min-h-screen text-white">
       <h2 className="text-2xl font-bold mb-4">Gestión de Usuarios</h2>
 
       {message && (
@@ -180,18 +178,20 @@ function Users() {
       )}
 
       {/* Botón que abre el modal usando useDisclosure */}
-      <Button onPress={onOpen} variant="primary" className="mb-4">
-        Nuevo Usuario
+      <Button onPress={onOpen} variant="light" className="mb-4">
+        Crear Usuario
       </Button>
 
-      {/* Modal centrado sobre la página */}
+      {/* Modal con fondo oscuro */}
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => (
             <div className="fixed inset-0 flex items-center justify-center">
-              <div className="bg-white p-6 rounded shadow-lg max-w-md w-full">
-                <ModalHeader>Crear Nuevo Usuario</ModalHeader>
-                <ModalBody>
+              <div className="bg-slate-900 text-white p-6 rounded shadow-lg max-w-md w-full">
+                <ModalHeader className="text-xl font-bold pb-4">
+                  Crear nuevo usuario
+                </ModalHeader>
+                <ModalBody className="gap-4">
                   <input
                     type="text"
                     placeholder="Nombre"
@@ -199,7 +199,7 @@ function Users() {
                     onChange={(e) =>
                       setNewUser({ ...newUser, name: e.target.value })
                     }
-                    className="border p-2 rounded w-full mb-2"
+                    className="border p-2 rounded w-full mb-2 bg-slate-800 text-white"
                   />
                   <input
                     type="email"
@@ -208,7 +208,7 @@ function Users() {
                     onChange={(e) =>
                       setNewUser({ ...newUser, email: e.target.value })
                     }
-                    className="border p-2 rounded w-full mb-2"
+                    className="border p-2 rounded w-full mb-2 bg-slate-800 text-white"
                   />
                   <input
                     type="password"
@@ -217,21 +217,24 @@ function Users() {
                     onChange={(e) =>
                       setNewUser({ ...newUser, password: e.target.value })
                     }
-                    className="border p-2 rounded w-full mb-2"
+                    className="border p-2 rounded w-full mb-2 bg-slate-800 text-white"
                   />
                   <select
                     value={newUser.role}
                     onChange={(e) =>
                       setNewUser({ ...newUser, role: e.target.value })
                     }
-                    className="border p-2 rounded w-full"
+                    className="border p-2 rounded w-full bg-slate-800 text-white mb-2"
                   >
                     <option value="ADMIN">ADMIN</option>
                     <option value="PROJECT_MANAGER">PROJECT_MANAGER</option>
                     <option value="MEMBER">MEMBER</option>
                   </select>
                 </ModalBody>
-                <ModalFooter>
+                <ModalFooter className="flex justify-end p-3">
+                  <Button onPress={onClose} variant="faded">
+                    Cancelar
+                  </Button>
                   <Button
                     onPress={async () => {
                       await handleCreateUser();
@@ -239,10 +242,7 @@ function Users() {
                     }}
                     variant="success"
                   >
-                    Crear Usuario
-                  </Button>
-                  <Button onPress={onClose} variant="secondary">
-                    Cancelar
+                    Confirmar
                   </Button>
                 </ModalFooter>
               </div>
@@ -251,10 +251,10 @@ function Users() {
         </ModalContent>
       </Modal>
 
-      {/* Tabla de usuarios */}
+      {/* Tabla de usuarios*/}
       <Table
         aria-label="Gestión de Usuarios"
-        className="text-foreground rounded shadow justify-center align-center rounded-2xl"
+        className="text-foreground rounded shadow justify-center align-center rounded-2xl bg-gray-900"
       >
         <TableHeader>
           <TableColumn>Nombre</TableColumn>
@@ -274,7 +274,7 @@ function Users() {
                     onChange={(e) =>
                       setEditingUser({ ...editingUser, name: e.target.value })
                     }
-                    className="border p-1 rounded"
+                    className="border p-1 rounded bg-slate-600 text-white"
                   />
                 ) : (
                   user.name
@@ -288,7 +288,7 @@ function Users() {
                     onChange={(e) =>
                       setEditingUser({ ...editingUser, email: e.target.value })
                     }
-                    className="border p-1 rounded"
+                    className="border p-1 rounded bg-slate-600 text-white"
                   />
                 ) : (
                   user.email
@@ -301,7 +301,7 @@ function Users() {
                     onChange={(e) =>
                       setEditingUser({ ...editingUser, role: e.target.value })
                     }
-                    className="border p-1 rounded"
+                    className="border p-1 rounded bg-slate-600 text-white"
                   >
                     <option value="ADMIN">ADMIN</option>
                     <option value="PROJECT_MANAGER">PROJECT_MANAGER</option>
@@ -323,7 +323,7 @@ function Users() {
                         password: e.target.value,
                       })
                     }
-                    className="border p-1 rounded"
+                    className="border p-1 rounded bg-slate-600 text-white"
                   />
                 ) : (
                   "*******"
