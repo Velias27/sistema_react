@@ -7,6 +7,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/lib/reactQuery";
 import Navbar from "../components/Navbar";
 import "@/styles/globals.css";
+import { HeroUIProvider } from "@heroui/react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,15 +22,15 @@ const geistMono = Geist_Mono({
 export default function RootLayout({ children }) {
   return (
     <html lang="es">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <QueryClientProvider client={queryClient}>
-          <SessionProvider>
-            <Navbar />
-            <main>{children}</main>
-          </SessionProvider>
-        </QueryClientProvider>
+      <body>
+        <HeroUIProvider>
+          <QueryClientProvider client={queryClient}>
+            <SessionProvider>
+              <Navbar />
+              <main>{children}</main>
+            </SessionProvider>
+          </QueryClientProvider>
+        </HeroUIProvider>
       </body>
     </html>
   );
