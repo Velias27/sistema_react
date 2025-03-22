@@ -58,113 +58,13 @@ function Users() {
   }, []);
 
   useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
+    fetch("/api/users")
+      .then((res) => res.json())
+      .then(setUsers)
+      .catch(() => setError("Error cargando usuarios"));
+  }, []);
 
-  const validateEmail = (email) => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(String(email).toLowerCase());
-  };
-
-  const handleCreateUser = async () => {
-    if (!newUser.name || !newUser.email || !newUser.password || !newUser.role) {
-      setMessage("Todos los campos son obligatorios");
-      return;
-    }
-    if (!validateEmail(newUser.email)) {
-      setMessage("Por favor, introduce un email válido");
-      return;
-    }
-    try {
-      const res = await fetch("/api/users", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newUser),
-      });
-      if (!res.ok) throw new Error("Error creando usuario");
-      await res.json();
-      setMessage("Usuario creado con éxito");
-      setNewUser({ name: "", email: "", password: "", role: "MEMBER" });
-      fetchUsers();
-    } catch (err) {
-      setMessage(err.message);
-    }
-  };
-
-  const startEditUser = (user) => {
-    setEditingUserId(user.id);
-    setEditingUser({
-      name: user.name,
-      email: user.email,
-      password: "", // Opcional para cambiar contraseña
-      role: user.role,
-    });
-  };
-
-  const cancelEdit = () => {
-    setEditingUserId(null);
-    setEditingUser({ name: "", email: "", password: "", role: "" });
-  };
-
-  const handleEditUser = async (id) => {
-    if (!editingUser.name || !editingUser.email || !editingUser.role) {
-      setMessage("Los campos nombre, email y rol son obligatorios");
-      return;
-    }
-    if (!validateEmail(editingUser.email)) {
-      setMessage("Por favor, introduce un email válido");
-      return;
-    }
-    try {
-      const payload = {
-        id,
-        name: editingUser.name,
-        email: editingUser.email,
-        role: editingUser.role,
-      };
-      if (editingUser.password.trim() !== "") {
-        payload.password = editingUser.password;
-      }
-      const res = await fetch("/api/users", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) throw new Error("Error actualizando usuario");
-      await res.json();
-      setMessage("Usuario actualizado con éxito");
-      cancelEdit();
-      fetchUsers();
-    } catch (err) {
-      setMessage(err.message);
-    }
-  };
-
-  const handleDeleteUser = async (id) => {
-    if (!confirm("¿Estás seguro de eliminar este usuario?")) return;
-    try {
-      const res = await fetch("/api/users", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id }),
-      });
-      if (!res.ok) throw new Error("Error eliminando usuario");
-      const result = await res.json();
-      setMessage(result.message || "Usuario eliminado");
-      fetchUsers();
-    } catch (err) {
-      setMessage(err.message);
-    }
-  };
-
-  useEffect(() => {
-    if (message) {
-      const timer = setTimeout(() => {
-        setMessage("");
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [message]);
+  if (error) return <p className="text-red-500">{error}</p>;
 
   return (
     // Contenedor con fondo oscuro y texto claro
