@@ -37,9 +37,11 @@ export default function Login() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded shadow-md w-96">
-        <h2 className="text-2xl font-bold text-center">Iniciar Sesión</h2>
+        <h2 className="text-2xl font-bold text-center text-gray-600 mb-4">
+          Iniciar Sesión
+        </h2>
         {error && <p className="text-red-500 text-center">{error}</p>}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 text-gray-400">
           <input
             type="email"
             placeholder="Correo electrónico"
